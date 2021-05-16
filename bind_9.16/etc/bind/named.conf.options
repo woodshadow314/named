@@ -1,0 +1,129 @@
+acl "authorized_networks" { localhost; localnets; 192.168.1.0/24; };
+
+options {
+	directory "/var/cache/bind";
+	
+	listen-on port 53 { any; };
+      listen-on-v6 port 53 { none; };
+	
+	allow-query {
+		authorized_networks;
+		};
+
+	recursion yes;
+
+	allow-recursion {
+		authorized_networks;
+		};
+
+	#dnssec-enable no;
+
+	forwarders {
+	 	8.8.8.8;
+	 };
+
+	dnssec-validation no;
+};
+
+logging {
+      category default         { default_log; };
+      category config          { default_log; };
+      category security        { security_log; };
+      category xfer-in         { xfer_log; };
+      category xfer-out        { xfer_log; };
+      category notify          { notify_log; };
+      category update          { update_log; };
+      category queries         { default_log; };
+      category client          { default_log; };
+      category lame-servers    { lame_servers_log; };
+      category dnssec          { dnssec_log; };
+      category update          { ddns_log; };
+      category update-security { ddns_log; };
+      category rate-limit      { rate_limiting_log; };
+      category rpz             { rpz_log; };
+      category queries         { query_errors_log; };
+      category query-errors    { query_errors_log; };
+        
+      channel default_debug {
+            #file "/var/named/data/named.run" versions 5 size 100M;
+            file "/var/lib/bind/named.run" versions 5 size 100M;
+            severity dynamic;
+      };
+      channel default_log {
+            file "/var/lib/bind/default.log" versions 3 size 100M;
+            severity info;
+            print-category yes;
+            print-severity yes;
+            print-time yes;
+      };
+      channel security_log {
+            file "/var/lib/bind/security.log" versions 3 size 100M;
+            severity warning;
+            print-category yes;
+            print-severity yes;
+            print-time yes;
+      };
+      channel xfer_log {
+            file "/var/lib/bind/xfer.log" versions 3 size 100M;
+            severity error;
+            print-category yes;
+            print-severity yes;
+            print-time yes;
+      };    
+      channel notify_log {
+            file "/var/lib/bind/notify.log" versions 3 size 100M;
+            severity notice;
+            print-category yes;
+            print-severity yes;
+            print-time yes;
+      };
+      channel update_log {
+            file "/var/lib/bind/update.log" versions 3 size 100M;
+            severity warning;
+            print-category yes;
+            print-severity yes;
+            print-time yes;
+      };        
+      channel lame_servers_log {
+            file "/var/lib/bind/lame-servers.log" versions 3 size 100M;
+            severity notice;
+            print-category yes;
+            print-severity yes;
+            print-time yes;
+      };
+      channel dnssec_log {
+            file "/var/lib/bind/dnssec.log" versions 3 size 20M;
+            severity info;
+            print-category yes;
+            print-severity yes;
+            print-time yes;
+      };
+      channel ddns_log {
+            file "/var/lib/bind/ddns.log" versions 3 size 20M;
+            severity info;
+            print-category yes;
+            print-severity yes;
+            print-time yes;
+      };
+      channel rate_limiting_log {
+            file "/var/lib/bind/rate-limiting.log" versions 5 size 50M;
+            severity info;
+            print-category yes;
+            print-severity yes;
+            print-time yes;
+      };
+      channel rpz_log {
+            file "/var/lib/bind/rpz.log" versions 3 size 100M;
+            severity info;
+            print-category yes;
+            print-severity yes;
+            print-time yes;
+      };
+      channel query_errors_log {
+            file "/var/lib/bind/query-errors.log" versions 5 size 50M;
+            severity dynamic;
+            print-category yes;
+            print-severity yes;
+            print-time yes;
+      };
+};
